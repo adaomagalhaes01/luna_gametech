@@ -98,6 +98,10 @@ class GameScene extends Phaser.Scene {
         const levelNames = ['🌳 Floresta Verde', '🕳️ Caverna Sombria', '🏰 Torre do Vilão'];
         this.hud.showLevelBanner(levelNames[GameState.currentLevel - 1] || 'Nível ' + GameState.currentLevel);
 
+        // ====== START MUSIC ======
+        soundManager.resume();
+        this.time.delayedCall(1000, () => soundManager.startMusic());
+
         // Camera fade in
         this.cameras.main.fadeIn(1000, 0, 0, 0);
     }
@@ -580,6 +584,13 @@ class GameScene extends Phaser.Scene {
 
         const carrotType = carrot.carrotType || 'normal';
 
+        // Sound
+        if (carrotType === 'normal') {
+            soundManager.playCollect();
+        } else {
+            soundManager.playPowerUp();
+        }
+
         // Score and effects based on type
         switch (carrotType) {
             case 'normal':
@@ -621,6 +632,7 @@ class GameScene extends Phaser.Scene {
     collectStar(star) {
         if (!star.active) return;
 
+        soundManager.playStar();
         GameState.score += 50;
 
         // Star collection effect
@@ -636,6 +648,7 @@ class GameScene extends Phaser.Scene {
 
         chest.isOpened = true;
         chest.play('chest-open');
+        soundManager.playChestOpen();
 
         // Reward
         GameState.score += 200;
@@ -776,55 +789,74 @@ class GameScene extends Phaser.Scene {
     // ==========================================
     createMobileControls() {
         const { width, height } = this.cameras.main;
+        const btnAlpha = 0.35;
+        const btnActiveAlpha = 0.6;
 
-        // Left button
-        const leftBtn = this.add.circle(60, height - 50, 30, 0xFFFFFF, 0.2);
+        // ====== D-PAD (LEFT SIDE) ======
+        // D-pad background circle
+        const dpadBg = this.add.circle(90, height - 90, 75, 0x000000, 0.15);
+        dpadBg.setScrollFactor(0).setDepth(199);
+
+        // Left button - large
+        const leftBtn = this.add.circle(45, height - 90, 42, 0xFFFFFF, btnAlpha);
         leftBtn.setScrollFactor(0).setDepth(200).setInteractive();
-        const leftArrow = this.add.text(60, height - 50, '◀', {
-            fontSize: '20px', color: '#FFFFFF'
+        const leftArrow = this.add.text(45, height - 90, '◀', {
+            fontSize: '32px', color: '#FFFFFF'
         }).setOrigin(0.5).setScrollFactor(0).setDepth(201);
 
-        leftBtn.on('pointerdown', () => { this.mobileControls.moveDir = -1; leftBtn.setFillStyle(0xFFFFFF, 0.5); });
-        leftBtn.on('pointerup', () => { this.mobileControls.moveDir = 0; leftBtn.setFillStyle(0xFFFFFF, 0.2); });
-        leftBtn.on('pointerout', () => { this.mobileControls.moveDir = 0; leftBtn.setFillStyle(0xFFFFFF, 0.2); });
+        leftBtn.on('pointerdown', () => { this.mobileControls.moveDir = -1; leftBtn.setFillStyle(0xFFFFFF, btnActiveAlpha); });
+        leftBtn.on('pointerup', () => { this.mobileControls.moveDir = 0; leftBtn.setFillStyle(0xFFFFFF, btnAlpha); });
+        leftBtn.on('pointerout', () => { this.mobileControls.moveDir = 0; leftBtn.setFillStyle(0xFFFFFF, btnAlpha); });
 
-        // Right button
-        const rightBtn = this.add.circle(140, height - 50, 30, 0xFFFFFF, 0.2);
+        // Right button - large
+        const rightBtn = this.add.circle(135, height - 90, 42, 0xFFFFFF, btnAlpha);
         rightBtn.setScrollFactor(0).setDepth(200).setInteractive();
-        const rightArrow = this.add.text(140, height - 50, '▶', {
-            fontSize: '20px', color: '#FFFFFF'
+        const rightArrow = this.add.text(135, height - 90, '▶', {
+            fontSize: '32px', color: '#FFFFFF'
         }).setOrigin(0.5).setScrollFactor(0).setDepth(201);
 
-        rightBtn.on('pointerdown', () => { this.mobileControls.moveDir = 1; rightBtn.setFillStyle(0xFFFFFF, 0.5); });
-        rightBtn.on('pointerup', () => { this.mobileControls.moveDir = 0; rightBtn.setFillStyle(0xFFFFFF, 0.2); });
-        rightBtn.on('pointerout', () => { this.mobileControls.moveDir = 0; rightBtn.setFillStyle(0xFFFFFF, 0.2); });
+        rightBtn.on('pointerdown', () => { this.mobileControls.moveDir = 1; rightBtn.setFillStyle(0xFFFFFF, btnActiveAlpha); });
+        rightBtn.on('pointerup', () => { this.mobileControls.moveDir = 0; rightBtn.setFillStyle(0xFFFFFF, btnAlpha); });
+        rightBtn.on('pointerout', () => { this.mobileControls.moveDir = 0; rightBtn.setFillStyle(0xFFFFFF, btnAlpha); });
 
-        // Jump button
-        const jumpBtn = this.add.circle(width - 70, height - 50, 35, 0x44FF44, 0.3);
+        // ====== ACTION BUTTONS (RIGHT SIDE) ======
+
+        // Jump button - LARGE (primary action)
+        const jumpBtn = this.add.circle(width - 80, height - 110, 48, 0x44FF44, btnAlpha);
         jumpBtn.setScrollFactor(0).setDepth(200).setInteractive();
-        const jumpLabel = this.add.text(width - 70, height - 50, '⬆', {
-            fontSize: '22px', color: '#FFFFFF'
+        const jumpLabel = this.add.text(width - 80, height - 110, '⬆', {
+            fontSize: '36px', color: '#FFFFFF'
+        }).setOrigin(0.5).setScrollFactor(0).setDepth(201);
+        this.add.text(width - 80, height - 75, 'PULO', {
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '6px', color: '#FFFFFF', alpha: 0.6
         }).setOrigin(0.5).setScrollFactor(0).setDepth(201);
 
-        jumpBtn.on('pointerdown', () => { this.mobileControls.jumping = true; jumpBtn.setFillStyle(0x44FF44, 0.6); });
-        jumpBtn.on('pointerup', () => { this.mobileControls.jumping = false; jumpBtn.setFillStyle(0x44FF44, 0.3); });
-        jumpBtn.on('pointerout', () => { this.mobileControls.jumping = false; jumpBtn.setFillStyle(0x44FF44, 0.3); });
+        jumpBtn.on('pointerdown', () => { this.mobileControls.jumping = true; jumpBtn.setFillStyle(0x44FF44, btnActiveAlpha); });
+        jumpBtn.on('pointerup', () => { this.mobileControls.jumping = false; jumpBtn.setFillStyle(0x44FF44, btnAlpha); });
+        jumpBtn.on('pointerout', () => { this.mobileControls.jumping = false; jumpBtn.setFillStyle(0x44FF44, btnAlpha); });
 
-        // Attack button
-        const attackBtn = this.add.circle(width - 140, height - 50, 30, 0xFF4444, 0.3);
+        // Attack button - large
+        const attackBtn = this.add.circle(width - 170, height - 70, 42, 0xFF4444, btnAlpha);
         attackBtn.setScrollFactor(0).setDepth(200).setInteractive();
-        const attackLabel = this.add.text(width - 140, height - 50, '⚔', {
-            fontSize: '18px', color: '#FFFFFF'
+        const attackLabel = this.add.text(width - 170, height - 70, '⚔', {
+            fontSize: '30px', color: '#FFFFFF'
+        }).setOrigin(0.5).setScrollFactor(0).setDepth(201);
+        this.add.text(width - 170, height - 38, 'ATK', {
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '6px', color: '#FFFFFF', alpha: 0.6
         }).setOrigin(0.5).setScrollFactor(0).setDepth(201);
 
-        attackBtn.on('pointerdown', () => { this.mobileControls.attacking = true; attackBtn.setFillStyle(0xFF4444, 0.6); });
-        attackBtn.on('pointerup', () => { this.mobileControls.attacking = false; attackBtn.setFillStyle(0xFF4444, 0.3); });
-        attackBtn.on('pointerout', () => { this.mobileControls.attacking = false; attackBtn.setFillStyle(0xFF4444, 0.3); });
+        attackBtn.on('pointerdown', () => { this.mobileControls.attacking = true; attackBtn.setFillStyle(0xFF4444, btnActiveAlpha); });
+        attackBtn.on('pointerup', () => { this.mobileControls.attacking = false; attackBtn.setFillStyle(0xFF4444, btnAlpha); });
+        attackBtn.on('pointerout', () => { this.mobileControls.attacking = false; attackBtn.setFillStyle(0xFF4444, btnAlpha); });
 
-        // Pause button (top center)
-        const pauseBtn = this.add.text(width / 2, 15, '⏸', {
-            fontSize: '24px'
-        }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(200).setInteractive();
+        // ====== PAUSE BUTTON (top right) ======
+        const pauseBg = this.add.circle(width - 30, 25, 18, 0x000000, 0.4);
+        pauseBg.setScrollFactor(0).setDepth(200);
+        const pauseBtn = this.add.text(width - 30, 25, '⏸', {
+            fontSize: '22px'
+        }).setOrigin(0.5).setScrollFactor(0).setDepth(201).setInteractive();
         pauseBtn.on('pointerdown', () => this.togglePause());
     }
 
@@ -884,6 +916,8 @@ class GameScene extends Phaser.Scene {
         this.menuBtn.on('pointerover', () => this.menuBtn.setColor('#FF6666'));
         this.menuBtn.on('pointerout', () => this.menuBtn.setColor('#AAAAAA'));
         this.menuBtn.on('pointerdown', () => {
+            if (window.soundManager) window.soundManager.stopMusic();
+            if (window.soundManager) window.soundManager.playMenuSelect();
             this.physics.resume();
             this.scene.stop('UIScene');
             this.scene.start('MenuScene');
@@ -901,6 +935,8 @@ class GameScene extends Phaser.Scene {
     // GAME OVER / VICTORY
     // ==========================================
     handlePlayerDeath() {
+        soundManager.stopMusic();
+        soundManager.playGameOver();
         this.cameras.main.fadeOut(1000, 0, 0, 0);
 
         this.time.delayedCall(1500, () => {
@@ -965,6 +1001,9 @@ class GameScene extends Phaser.Scene {
 
     showVictoryScreen() {
         const { width, height } = this.cameras.main;
+
+        soundManager.stopMusic();
+        soundManager.playLevelComplete();
 
         // Pause physics
         this.physics.pause();
@@ -1052,6 +1091,8 @@ class GameScene extends Phaser.Scene {
             strokeThickness: 2
         }).setOrigin(0.5).setScrollFactor(0).setDepth(401).setInteractive({ useHandCursor: true });
         menuBtn.on('pointerdown', () => {
+            if (window.soundManager) window.soundManager.stopMusic();
+            if (window.soundManager) window.soundManager.playMenuSelect();
             this.scene.stop('UIScene');
             this.scene.start('MenuScene');
         });

@@ -257,6 +257,7 @@ class MenuScene extends Phaser.Scene {
         });
 
         hitArea.on('pointerdown', () => {
+            if (window.soundManager) window.soundManager.playMenuSelect();
             btnText.setScale(0.95);
             this.time.delayedCall(100, callback);
         });
@@ -392,6 +393,7 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
         closeBtn.setInteractive({ useHandCursor: true });
         closeBtn.on('pointerdown', () => {
+            if (window.soundManager) window.soundManager.playMenuSelect();
             overlay.destroy();
             modal.destroy();
             soundLabel.destroy();
@@ -451,6 +453,7 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
         closeBtn.setInteractive({ useHandCursor: true });
         closeBtn.on('pointerdown', () => {
+            if (window.soundManager) window.soundManager.playMenuSelect();
             overlay.destroy();
             modal.destroy();
             storyTitle.destroy();

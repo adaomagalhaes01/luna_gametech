@@ -170,6 +170,7 @@ class CharacterSelectScene extends Phaser.Scene {
                 });
 
                 hitArea.on('pointerdown', () => {
+                    if (window.soundManager) window.soundManager.playMenuSelect();
                     GameState.currentLevel = index + 1;
                     GameState.reset();
                     this.cameras.main.fadeOut(500, 0, 0, 0);

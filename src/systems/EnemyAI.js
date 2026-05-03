@@ -347,6 +347,8 @@ class EnemyAI {
     killEnemy(enemy) {
         enemy.enemyData.state = 'dead';
 
+        if (window.soundManager) window.soundManager.playEnemyDeath();
+
         // Add score
         GameState.score += enemy.enemyData.scoreValue;
 

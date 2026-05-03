@@ -101,6 +101,15 @@ const config = {
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
+        expandParent: true,
+        min: {
+            width: 400,
+            height: 240
+        },
+        max: {
+            width: 1600,
+            height: 960
+        }
     },
     physics: {
         default: 'arcade',
@@ -112,7 +121,7 @@ const config = {
     },
     scene: [BootScene, MenuScene, CharacterSelectScene, GameScene, UIScene],
     input: {
-        activePointers: 3
+        activePointers: 4
     },
     render: {
         pixelArt: true,
@@ -123,6 +132,28 @@ const config = {
 
 // Initialize game
 const game = new Phaser.Game(config);
+
+// Request fullscreen on first touch (mobile)
+function requestFullscreen() {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(() => { });
+    } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+    }
+    // Lock screen orientation to landscape
+    if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(() => { });
+    }
+    // Remove once triggered
+    document.removeEventListener('touchstart', requestFullscreen);
+    document.removeEventListener('click', requestFullscreen);
+}
+
+document.addEventListener('touchstart', requestFullscreen, { once: true });
+document.addEventListener('click', requestFullscreen, { once: true });
 
 // Register Service Worker
 if ('serviceWorker' in navigator) {
@@ -135,3 +166,4 @@ if ('serviceWorker' in navigator) {
 
 // Load saved progress
 GameState.load();
+

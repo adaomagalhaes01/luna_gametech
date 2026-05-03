@@ -136,6 +136,7 @@ class Player {
             this.sprite.setVelocityY(jumpForce);
             this.sprite.play('jump');
             this.emitDust();
+            if (window.soundManager) window.soundManager.playJump();
         }
 
         // Duck
@@ -202,6 +203,8 @@ class Player {
             this.scene.combatSystem.playerAttack(this.attackHitbox);
         }
 
+        if (window.soundManager) window.soundManager.playAttack();
+
         // Clean up
         this.scene.time.delayedCall(200, () => {
             if (this.attackHitbox) {
@@ -226,6 +229,7 @@ class Player {
 
         // Hurt animation
         this.sprite.play('hurt');
+        if (window.soundManager) window.soundManager.playHurt();
 
         // Knockback
         const knockbackDir = this.facingRight ? -1 : 1;
@@ -345,6 +349,7 @@ class Player {
             this.sprite.setVelocityY(jumpForce);
             this.sprite.play('jump');
             this.emitDust();
+            if (window.soundManager) window.soundManager.playJump();
         }
 
         if (attacking) {
