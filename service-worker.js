@@ -1,5 +1,4 @@
-// Service Worker - Jornada da Coelha
-const CACHE_NAME = 'jornada-coelha-v2';
+const CACHE_NAME = 'jornada-coelha-v3';
 const urlsToCache = [
     './',
     './index.html',
