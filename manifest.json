@@ -1,0 +1,18 @@
+{
+    "name": "Jornada da Coelha: O Segredo das Cenouras",
+    "short_name": "Jornada Coelha",
+    "description": "Um jogo 2D de plataforma com a coelha Luna em Cenouralândia!",
+    "start_url": "./index.html",
+    "display": "fullscreen",
+    "orientation": "landscape",
+    "background_color": "#1a1a2e",
+    "theme_color": "#4a9e3f",
+    "icons": [
+        {
+            "src": "material/Assets/PNG/sprites/player/player-idle/player-idle-1.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        }
+    ],
+    "categories": ["games", "entertainment"]
+}

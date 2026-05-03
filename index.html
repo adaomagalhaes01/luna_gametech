@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="description" content="Jornada da Coelha: O Segredo das Cenouras - Um jogo de plataforma 2D com a coelha Luna em Cenouralândia">
+    <meta name="theme-color" content="#4a9e3f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Jornada da Coelha: O Segredo das Cenouras</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container"></div>
+    <div id="orientation-warning">
+        <div class="orientation-content">
+            <div class="rotate-icon">📱</div>
+            <p>Por favor, gire o dispositivo para o modo horizontal</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    
+    <!-- Systems -->
+    <script src="src/systems/Player.js"></script>
+    <script src="src/systems/EnemyAI.js"></script>
+    <script src="src/systems/CombatSystem.js"></script>
+    <script src="src/systems/CollisionSystem.js"></script>
+    <script src="src/systems/HUD.js"></script>
+    
+    <!-- Scenes -->
+    <script src="src/scenes/BootScene.js"></script>
+    <script src="src/scenes/MenuScene.js"></script>
+    <script src="src/scenes/CharacterSelectScene.js"></script>
+    <script src="src/scenes/GameScene.js"></script>
+    <script src="src/scenes/UIScene.js"></script>
+    
+    <!-- Main -->
+    <script src="src/main.js"></script>
+</body>
+</html>
