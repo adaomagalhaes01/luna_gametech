@@ -99,7 +99,7 @@ const config = {
     antialias: false,
     roundPixels: true,
     scale: {
-        mode: Phaser.Scale.FIT,
+        mode: Phaser.Scale.ENVELOP,
         autoCenter: Phaser.Scale.CENTER_BOTH,
         width: GAME_CONFIG.WIDTH,
         height: GAME_CONFIG.HEIGHT,
@@ -140,13 +140,14 @@ function requestFullscreen() {
     if (screen.orientation && screen.orientation.lock) {
         screen.orientation.lock('landscape').catch(() => { });
     }
-    // Remove once triggered
-    document.removeEventListener('touchstart', requestFullscreen);
-    document.removeEventListener('click', requestFullscreen);
 }
 
-document.addEventListener('touchstart', requestFullscreen, { once: true });
-document.addEventListener('click', requestFullscreen, { once: true });
+document.addEventListener('touchstart', () => {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) requestFullscreen();
+});
+document.addEventListener('click', () => {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) requestFullscreen();
+});
 
 // Register Service Worker
 if ('serviceWorker' in navigator) {
