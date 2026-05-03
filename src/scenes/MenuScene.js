@@ -349,13 +349,13 @@ class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Sound toggle
-        const soundLabel = this.add.text(width / 2 - 80, height / 2 - 30, '🔊 Som:', {
+        const soundLabel = this.add.text(width / 2 - 80, height / 2 - 50, '🔊 Som:', {
             fontFamily: '"Press Start 2P", monospace',
             fontSize: '12px',
             color: '#FFFFFF'
         });
 
-        const soundState = this.add.text(width / 2 + 60, height / 2 - 30, GameState.isMuted ? 'OFF' : 'ON', {
+        const soundState = this.add.text(width / 2 + 60, height / 2 - 50, GameState.isMuted ? 'OFF' : 'ON', {
             fontFamily: '"Press Start 2P", monospace',
             fontSize: '12px',
             color: GameState.isMuted ? '#FF4444' : '#44FF44'
@@ -368,8 +368,37 @@ class MenuScene extends Phaser.Scene {
             GameState.save();
         });
 
+        // Fullscreen toggle
+        const fsLabel = this.add.text(width / 2 - 80, height / 2 - 15, '📺 Tela Cheia:', {
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '10px',
+            color: '#FFFFFF'
+        });
+
+        const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+        const fsState = this.add.text(width / 2 + 60, height / 2 - 15, isFullscreen ? 'ON' : 'OFF', {
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '12px',
+            color: isFullscreen ? '#44FF44' : '#FF4444'
+        });
+        fsState.setInteractive({ useHandCursor: true });
+        fsState.on('pointerdown', () => {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) elem.requestFullscreen();
+                else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+                fsState.setText('ON');
+                fsState.setColor('#44FF44');
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                fsState.setText('OFF');
+                fsState.setColor('#FF4444');
+            }
+        });
+
         // Reset progress
-        const resetText = this.add.text(width / 2, height / 2 + 20, '🗑️ Resetar Progresso', {
+        const resetText = this.add.text(width / 2, height / 2 + 30, '🗑️ Resetar Progresso', {
             fontFamily: '"Press Start 2P", monospace',
             fontSize: '10px',
             color: '#FF6666'
@@ -398,6 +427,8 @@ class MenuScene extends Phaser.Scene {
             modal.destroy();
             soundLabel.destroy();
             soundState.destroy();
+            fsLabel.destroy();
+            fsState.destroy();
             resetText.destroy();
             closeBtn.destroy();
         });

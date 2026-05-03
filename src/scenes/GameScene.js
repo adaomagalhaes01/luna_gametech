@@ -10,6 +10,10 @@ class GameScene extends Phaser.Scene {
     create() {
         const { width, height } = this.cameras.main;
 
+        // Reset state from previous runs
+        this.levelComplete = false;
+        this.isPaused = false;
+
         // Reset physics world bounds for level
         this.levelWidth = 4000;
         this.levelHeight = height;
@@ -110,21 +114,38 @@ class GameScene extends Phaser.Scene {
     // BACKGROUND
     // ==========================================
     createBackground() {
-        // Sky gradient
-        const skyBg = this.add.image(0, 0, 'sky-background');
-        skyBg.setOrigin(0, 0);
-        skyBg.setDisplaySize(this.cameras.main.width, this.cameras.main.height);
-        skyBg.setScrollFactor(0);
-        skyBg.setDepth(-10);
+        // Select background based on level
+        const isLevel2 = GameState.currentLevel === 2;
+        const bgLayerKey = isLevel2 ? 'level-two-bg' : 'bg-layer';
+
+        // Sky gradient setup
+        if (!isLevel2) {
+            const skyBg = this.add.image(0, 0, 'sky-background');
+            skyBg.setOrigin(0, 0);
+            skyBg.setDisplaySize(this.cameras.main.width, this.cameras.main.height);
+            skyBg.setScrollFactor(0);
+            skyBg.setDepth(-10);
+        } else {
+            // Dark solid background for level 2
+            const darkBg = this.add.rectangle(0, 0, this.levelWidth, this.levelHeight, 0x051024);
+            darkBg.setOrigin(0, 0);
+            darkBg.setScrollFactor(0);
+            darkBg.setDepth(-10);
+        }
 
         // Parallax background layer
         const bgScale = this.levelHeight / 240;
         const bgTilesNeeded = Math.ceil(this.levelWidth / (192 * bgScale)) + 2;
         for (let i = 0; i < bgTilesNeeded; i++) {
-            const bg = this.add.image(i * 192 * bgScale, this.levelHeight, 'bg-layer');
+            // level-two-bg is likely larger
+            const imgWidth = isLevel2 ? 1024 : 192;
+            const bgTilesNeededAdjusted = Math.ceil(this.levelWidth / (imgWidth * bgScale)) + 2;
+            if (i >= bgTilesNeededAdjusted) continue;
+
+            const bg = this.add.image(i * imgWidth * bgScale, this.levelHeight, bgLayerKey);
             bg.setOrigin(0, 1);
             bg.setScale(bgScale);
-            bg.setAlpha(0.5);
+            bg.setAlpha(isLevel2 ? 1 : 0.5);
             bg.setScrollFactor(0.2);
             bg.setDepth(-8);
         }

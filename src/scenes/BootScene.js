@@ -71,6 +71,7 @@ class BootScene extends Phaser.Scene {
         this.load.image('tileset-img', 'material/Assets/PNG/environment/layers/tileset.png');
         this.load.image('props-sheet', 'material/Assets/PNG/environment/layers/props.png');
         this.load.image('sky-background', 'src/assets/backgrounds/sky_background.png');
+        this.load.image('level-two-bg', 'material/Assets/PNG/environment/layers/level_two_background.png');
 
         // ====== ENVIRONMENT PROPS ======
         this.load.image('house', 'material/Assets/PNG/environment/props/house.png');
